@@ -5,52 +5,181 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        RandomGraphGen ourGraph = new RandomGraphGen();
-        ourGraph.GenerateGraph(100, 0.5f);
-        
-        foreach (var item in RandomGraphGen.Connections)
+        Console.WriteLine("""
+                          Hello!
+                          I am your assistant in Discrete Math.
+                          Actually, I am just a project on Discrete Math.
+
+                          I can solve some tasks for you, including:
+                          ––– Generating graphs (oriented) with your parameters (size and density) +
+                          ––– Generating adjacency matrix and list -
+                          ––– Generating reachability matrix -
+                          ––– Generating .png with your graph +
+                          ––– Analysing the time of the algorithms, building the same reachability matrix with different algorithms and counting the time of their work -
+                          """);
+        while (true)
         {
-            Console.WriteLine("Key: {0}", item.Key);
-            foreach (var value in item.Value)
+            Console.WriteLine("""
+                              You can choose from the following tasks:
+
+                              ––– Generating a random graph with your parameters (1)
+
+                              ––– Calculating the difference between DFS and BFS algorithms (2)
+
+                              You can choose your option by typing the number of the task you want to solve or type 'e' to exit.
+                              """);
+            string input = Console.ReadLine();
+
+            switch (input)
             {
-                Console.WriteLine("Value: {0}", value);
+                case "1":
+
+                    int size;
+                    float density;
+
+                    IfAMistakeInSize:
+                    Console.WriteLine("Enter the size of the graph:");
+                    try
+                    {
+                        size = int.Parse(Console.ReadLine());
+                    }
+                    catch (FormatException)
+                    {
+                        Console.WriteLine("Please enter a valid number.");
+                        goto IfAMistakeInSize;
+                    }
+
+                    IfAMistakeInDensity:
+                    Console.WriteLine("Enter the density of the graph (between 0.01 and 1):");
+                    try
+                    {
+                        density = float.Parse(Console.ReadLine());
+                        if (density < 0.01 || density > 1)
+                        {
+                            Console.WriteLine("Your number is not valid.");
+                            goto IfAMistakeInDensity;
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                        Console.WriteLine("Please enter a valid number.");
+                        goto IfAMistakeInDensity;
+                    }
+
+                    RandomGraphGen graph = new RandomGraphGen();
+                    graph.GenerateGraph(size, density);
+                    GraphGeneratorCheckPoint:
+                    Console.WriteLine($"""
+                                       The graph with your parameters (size: {size}; density: {density}) has been generated!
+
+                                       Want to see:
+                                       ––– Adjacency matrix (1)
+                                       ––– Adjacency list (2)
+                                       ––– Both (3)
+                                       ––– Create .png with the graph (4)
+                                       ––– Reachability matrix (5)
+                                       """);
+
+                    string input2 = Console.ReadLine();
+                    switch (input2)
+                    {
+                        case "1":
+                            var matrix = RandomGraphGen.MatrixVisualiser();
+                            RandomGraphGen.PrintMatrixWithAxesAndBorders(matrix);
+                            break;
+
+                        case "2":
+                            Console.Write("[ ");
+                            foreach (var item in RandomGraphGen.Connections)
+                            {
+                                if (item.Value.Count > 0)
+                                {
+                                    foreach (var value in item.Value)
+                                    {
+                                        Console.Write("({0} –> {1}), ", item.Key, value);
+                                    }
+
+                                    Console.WriteLine();
+                                }
+                            }
+
+                            Console.WriteLine("]");
+                            break;
+
+                        case "3":
+                            var matrix2 = RandomGraphGen.MatrixVisualiser();
+                            RandomGraphGen.PrintMatrixWithAxesAndBorders(matrix2);
+                            Console.Write("[ ");
+                            foreach (var item in RandomGraphGen.Connections)
+                            {
+                                if (item.Value.Count > 0)
+                                {
+                                    foreach (var value in item.Value)
+                                    {
+                                        Console.Write("({0} –> {1}), ", item.Key, value);
+                                    }
+
+                                    Console.WriteLine();
+                                }
+                            }
+
+                            Console.WriteLine("]");
+                            break;
+
+                        case "4":
+                            visualisator vis = new visualisator();
+                            try
+                            {
+                                vis.DotScriptGenerator();
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine($"""
+                                                   Oopsie( An error was thrown: {e}. There was some problem with the path and permission, so it is possible
+                                                   that this function is only working on MacOS (or on my only).
+                                                   But still you can see generated graph in the png folder. Just open the file 'new_graph.png' in the folder 'png'.
+                                                   """);
+                            }
+
+                            break;
+
+                        case "5":
+                            long[,] reachMatrix = graph.ReachabilityMatrixUsingBFS();
+                            RandomGraphGen.PrintMatrixWithAxesAndBorders(reachMatrix);
+                            break;
+
+                        default:
+                            Console.WriteLine("Please, enter a valid number.");
+                            goto GraphGeneratorCheckPoint;
+                            break;
+                    }
+
+                    Console.WriteLine("Do you want to see more? (y/n)");
+                    string input3 = Console.ReadLine();
+                    if (input3 == "n")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        goto GraphGeneratorCheckPoint;
+                    }
+
+                    break;
+
+                case "2":
+
+                    break;
+
             }
+
+
+
+
+
+
+
+
         }
-        var matrix = RandomGraphGen.MatrixVisualiser();
-        RandomGraphGen.PrintMatrixWithAxesAndBorders(matrix);
-        visualisator Vis = new visualisator();
-        
-//visualising the graph
-
-// var graph = new UndirectedGraph<int, IEdge<int>>();
-//         graph.AddVertex(1);
-//         graph.AddVertex(2);
-//         graph.AddVertex(3);
-//         graph.AddVertex(4);
-//         graph.AddVertex(5);
-//         graph.AddEdge(new Edge<int>(1, 2));
-//         graph.AddEdge(new Edge<int>(2, 3));
-//         graph.AddEdge(new Edge<int>(3, 4));
-//         graph.AddEdge(new Edge<int>(4, 1));
-//         graph.AddEdge(new Edge<int>(5, 2));
-//
-//
-// // Create a Graphviz algorithm
-//         var graphviz = new GraphvizAlgorithm<int, IEdge<int>>(graph);
-//
-// // Customize the edge rendering
-//         graphviz.FormatEdge += (sender, args) => { args.EdgeFormatter.Label.Value = args.Edge.ToString(); };
-//
-//         // Generate DOT script and create png file
-//         var visualisator = new visualisator();
-//         string dotScript = graphviz.Generate();
-//         visualisator.VisualizeGraph(dotScript);
-//         
-//         
-// // Run the following command in the terminal to generate the PNG image:
-// //dot -Tpng graph.dot -o graph.png
-
-
-
     }
 }

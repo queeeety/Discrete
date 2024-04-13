@@ -1,72 +1,49 @@
-namespace Discrete;
+using QuickGraph;
+using QuickGraph.Graphviz;
+using QuickGraph.Graphviz.Dot;
+using System.IO;
+using Discrete;
 using System.Diagnostics;
 
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 
 public class visualisator
 {
-    public void VisualizeGraph(string dotScript)
+
+    public void DotScriptGenerator()
     {
-        // Replace '->' with '--'
-        dotScript = dotScript.Replace("->", "--");
-
-        // Define the file paths
-        string dotFilePath = "graph.dot";
-        string pngFilePath = "graph.png";
-
-        // Save the dotScript to the dotFilePath
-        File.WriteAllText(dotFilePath, dotScript);
-
-        // Create a new process start info
-        var startInfo = new ProcessStartInfo
+        var graph = new AdjacencyGraph<int, Edge<int>>();
+        foreach (var item in RandomGraphGen.Connections)
         {
-            FileName = "dot",
-            Arguments = $"-Tpng {dotFilePath} -o {pngFilePath}",
+            graph.AddVertex(item.Key);
+            foreach (var value in item.Value)
+            {
+                if (!graph.ContainsVertex(value))
+                {
+                    graph.AddVertex(value);
+                }
+
+                graph.AddEdge(new Edge<int>(item.Key, value));
+            }
+        }
+
+        var graphviz = new GraphvizAlgorithm<int, Edge<int>>(graph);
+        string dot = graphviz.Generate();
+
+        string filePath = "new_graph.dot";
+        File.WriteAllText(filePath, dot);
+
+        // Generate an image from the dot file using the dot command-line tool
+        var processStartInfo = new ProcessStartInfo
+        {
+            FileName = "/opt/homebrew/bin/dot", // Correct absolute path without angle brackets
+            Arguments = $"-Tpng {filePath} -o new_graph.png",
             RedirectStandardOutput = true,
             UseShellExecute = false,
             CreateNoWindow = true,
         };
 
-        // Start the process
-        var process = new Process { StartInfo = startInfo };
+        var process = new Process { StartInfo = processStartInfo };
         process.Start();
-
-        // Wait for the process to finish
         process.WaitForExit();
     }
-
-
-
-    //
-    //
-    // public void CreateImageFromMatrix(int[,] matrix)
-    // {
-    //     int size = matrix.GetLength(0);
-    //     int cellSize = 50; // size of each cell in pixels
-    //
-    //     // Create a new image
-    //     using (Image<Rgba32> image = new Image<Rgba32>(size * cellSize, size * cellSize))
-    //     {
-    //         // Set the background color
-    //         image.Mutate(x => x.BackgroundColor(Rgba32.White));
-    //
-    //         // Draw the matrix
-    //         for (int i = 0; i < size; i++)
-    //         {
-    //             for (int j = 0; j < size; j++)
-    //             {
-    //                 // Choose a color based on the matrix value
-    //                 Rgba32 color = matrix[i, j] == 0 ? Rgba32.Black : Rgba32.White;
-    //
-    //                 // Draw the cell
-    //                 image.Mutate(x => x.Fill(color, new Rectangle(i * cellSize, j * cellSize, cellSize, cellSize)));
-    //             }
-    //         }
-    //
-    //         // Save the image as a PNG file
-    //         image.Save("matrix.png");
-    //     }
-    // }
 }

@@ -8,10 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="GraphSharp" Version="1.1.0" />
-      <PackageReference Include="GraphvizNet" Version="1.0.3" />
-      <PackageReference Include="Kemsekov.GraphSharp" Version="3.1.2" />
-      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
+      <PackageReference Include="Graphviz" Version="2.38.0.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="QuickGraph" Version="3.6.61119.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="png\" />
     </ItemGroup>
 
 </Project>
