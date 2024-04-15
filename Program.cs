@@ -188,22 +188,10 @@ public class Program
                     {
                         goto case "2";
                     }
-
-
-
                 case "e":
                     Console.WriteLine("Ok, bye!");
                     return;
-
             }
-
-
-
-
-
-
-
-
         }
     }
 }
