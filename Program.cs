@@ -5,6 +5,8 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        RandomGraphGen graph = new RandomGraphGen();
+
         Console.WriteLine("""
                           Hello!
                           I am your assistant in Discrete Math.
@@ -50,11 +52,11 @@ public class Program
                     }
 
                     IfAMistakeInDensity:
-                    Console.WriteLine("Enter the density of the graph (between 0.01 and 1):");
+                    Console.WriteLine("Enter the density of the graph (between 0,01 and 1):");
                     try
                     {
                         density = float.Parse(Console.ReadLine());
-                        if (density < 0.01 || density > 1)
+                        if (density <= 0.01 || density > 1)
                         {
                             Console.WriteLine("Your number is not valid.");
                             goto IfAMistakeInDensity;
@@ -66,7 +68,7 @@ public class Program
                         goto IfAMistakeInDensity;
                     }
 
-                    RandomGraphGen graph = new RandomGraphGen();
+
                     graph.GenerateGraph(size, density);
                     GraphGeneratorCheckPoint:
                     Console.WriteLine($"""
@@ -168,8 +170,30 @@ public class Program
                     break;
 
                 case "2":
+                    Console.WriteLine("""
+                                      Wellcome to BFS vs DFS comparison!
+                                      This quick test will show you average time of the creating reachability matrix with BFS and DFS algorithms.
+                                      And, the short conclusion will be given.
+                                      Starting the test...
+                                      """);
+                    graph.GenerateGraph(1000, 1);
+                    Experiments.CompareAlgorithms();
 
-                    break;
+                    string input4 = Console.ReadLine();
+                    if (input4 == "n")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        goto case "2";
+                    }
+
+
+
+                case "e":
+                    Console.WriteLine("Ok, bye!");
+                    return;
 
             }
 
