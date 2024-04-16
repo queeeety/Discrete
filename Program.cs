@@ -1,4 +1,6 @@
 ﻿
+using QuickGraph.Algorithms.Services;
+
 namespace Discrete;
 
 public class Program
@@ -97,11 +99,13 @@ public class Program
                     switch (input2)
                     {
                         case "1":
+                            // Adjacency matrix
                             var matrix = RandomGraphGen.MatrixVisualiser();
                             RandomGraphGen.PrintMatrixWithAxesAndBorders(matrix);
                             break;
 
                         case "2":
+                            // Adjacency list
                             Console.Write("[ ");
                             foreach (var item in RandomGraphGen.Connections)
                             {
@@ -120,6 +124,7 @@ public class Program
                             break;
 
                         case "3":
+                            // Both adjacency matrix and list
                             var matrix2 = RandomGraphGen.MatrixVisualiser();
                             RandomGraphGen.PrintMatrixWithAxesAndBorders(matrix2);
                             Console.Write("[ ");
@@ -140,6 +145,7 @@ public class Program
                             break;
 
                         case "4":
+                            // Create .png with the graph
                             visualisator vis = new visualisator();
                             try
                             {
@@ -181,7 +187,6 @@ public class Program
                                     if (Console.ReadLine() == "y")
                                     {
                                         ConnectionCheckPoint:
-                                        Console.WriteLine("Enter the number of the point you want to connect with the new point:");
                                         try
                                         {
                                             int point2 = int.Parse(Console.ReadLine());
@@ -204,7 +209,6 @@ public class Program
                                             Console.WriteLine("Please enter a valid number.");
                                             goto case "6";
                                         }
-
                                     }
                                 }
                             }
@@ -217,26 +221,168 @@ public class Program
 
                         case "7":
                             // Remove point
+                            Console.WriteLine("Please, enter the number of the points you want to remove:");
+                            try
+                            {
+                                int number = int.Parse(Console.ReadLine() ?? string.Empty);
+
+                                    Console.WriteLine("Please, enter the point you want to remove:");
+                                    int point = int.Parse(Console.ReadLine());
+                                    int checker = graph.RemovePoint(point);
+                                    if (checker == 0)
+                                    {
+                                        Console.WriteLine("The point has been removed successfully.");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("The point doesn't exist. Please, try again.");
+                                        goto case "7";
+                                    }
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("There is a mistake with your input. Please, try again.");
+                                goto case "7";
+                            }
                             break;
 
                         case "8":
                             // Add edge
+                            try
+                            {
+                                Console.WriteLine("Please, enter the edge you want to add:  (example: x1 y1)");
+                                string[] splitInput = Console.ReadLine().Split(' ');
+                                int p1 = int.Parse(splitInput[0]);
+                                int p2 = int.Parse(splitInput[1]);
+                                int checker = graph.AddPoint(p1, p2);
+                                if (checker == 0)
+                                {
+                                    Console.WriteLine("The edge has been added successfully.");
+                                }
+                                else if (checker == 1)
+                                {
+                                    Console.WriteLine("The edge already exists. Please, try again.");
+                                    goto case "8";
+                                }
+                                else if (checker == 2)
+                                {
+                                    Console.WriteLine("At least one of the vertex doesn't exist. Please, try again.");
+                                    goto case "8";
+                                }
+
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("There is a mistake with your input. Please, try again.");
+                                goto case "8";
+                            }
+
                             break;
 
                         case "9":
                             // Remove the edge with all incident points
+                            try
+                            {
+                                Console.WriteLine("Please, enter the edge you want to remove:  (example: x1 y1)");
+                                string[] splitInput = Console.ReadLine().Split(' ');
+                                int p1 = int.Parse(splitInput[0]);
+                                int p2 = int.Parse(splitInput[1]);
+                                int checker = graph.RemoveEdge(p1, p2);
+                                if (checker == 0)
+                                {
+                                    Console.WriteLine("The edge has been removed successfully.");
+                                }
+                                else if (checker == 1)
+                                {
+                                    Console.WriteLine("The edge does not exist. Please, try again.");
+                                    goto case "9";
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("There is a mistake with your input. Please, try again.");
+                                goto case "9";
+                            }
                             break;
 
                         case "10":
                             // Insert the vertex to the defined edge
+                            try
+                            {
+                                Console.WriteLine("Please, enter the edge you want to interrupt:  (example: x1 y1)");
+                                string[] splitInput = Console.ReadLine().Split(' ');
+                                int p1 = int.Parse(splitInput[0]);
+                                int p2 = int.Parse(splitInput[1]);
+                                int checker = graph.CheckTheEdge(p1, p2);
+                                if (checker == 1)
+                                {
+                                    Console.WriteLine("Seems like at least one of the vertex does not exist. Try again.");
+                                    goto case "10";
+                                }
+                                Console.WriteLine("Please, enter the point you want to insert:");
+                                int point = int.Parse(Console.ReadLine());
+                                graph.AddPoint(p1, point);
+                                graph.AddPoint(point, p2);
+                                graph.RemoveEdge(p1, p2);
+                                    Console.WriteLine($"Done! The point {point} has been inserted between {p1} and {p2}.");
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("There is a mistake with your input. Please, try again.");
+                                goto case "10";
+                            }
                             break;
 
                         case "11":
                             // Edges pulling
-                        break;
+                            try
+                            {
+                                Console.WriteLine("Please, enter the edge you want to pull:  (example: x1 y1)");
+                                string[] splitInput = Console.ReadLine().Split(' ');
+                                int p1 = int.Parse(splitInput[0]);
+                                int p2 = int.Parse(splitInput[1]);
+                                int checker = graph.PointPuller(p1, p2);
+                                if (checker == 0)
+                                {
+                                    Console.WriteLine("The edge has been pulled successfully.");
+                                }
+                                else if (checker == 1)
+                                {
+                                    Console.WriteLine("The edge does not exist. Please, try again.");
+                                    goto case "11";
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("There is a mistake with your input. Please, try again.");
+                                goto case "11";
+                            }
+                            break;
 
                         case "12":
                             // Vertex identification
+                            try
+                            {
+                                Console.WriteLine("Please, enter the vertices you want to concate:  (example: x1 y1)");
+                                string[] splitInput = Console.ReadLine().Split(' ');
+                                int p1 = int.Parse(splitInput[0]);
+                                int p2 = int.Parse(splitInput[1]);
+                                int checker = graph.PointPuller(p1, p2);
+                                if (checker == 0)
+                                {
+                                    Console.WriteLine("The vertices has been unified successfully.");
+                                }
+                                else if (checker == 1)
+                                {
+                                    Console.WriteLine("One of the vertice does not exist. Please, try again.");
+                                    goto case "12";
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("There is a mistake with your input. Please, try again.");
+                                goto case "12";
+                            }
                             break;
 
                         default:

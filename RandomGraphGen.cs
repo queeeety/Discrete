@@ -14,15 +14,15 @@ public class RandomGraphGen
     // значить так, поїхали, (*ня*)
     public int AddPoint(int x, int y = default) // class for points to have them structurised
     {
-        if (!Connections.ContainsKey(y))
+        if (!Connections.ContainsKey(y) && y != default && !Connections.ContainsKey(x))
         {
-            return 2;
+            return 2; // return 2 if the value is not in the dictionary
         }
         if (y == default)
         {
             if (Connections.ContainsKey(x))
             {
-                return 1;
+                return 1; // return 1 if the key is already in the dictionary
             }
             Connections.Add(x, new List<int> { });
             return 0;
@@ -40,6 +40,73 @@ public class RandomGraphGen
         return 0; // return 0 if the value was added
     }
 
+    public int RemovePoint(int x)
+    {
+        if (Connections.ContainsKey(x))
+        {
+            Connections.Remove(x);
+            foreach (var item in Connections)
+            {
+                if (item.Value.Contains(x))
+                {
+                    item.Value.Remove(x);
+                }
+            }
+            return 0;
+        }
+        return 1;
+    }
+
+    public int RemoveEdge(int x, int y)
+    {
+        if (Connections.ContainsKey(x))
+        {
+            if (Connections[x].Contains(y))
+            {
+                Connections[x].Remove(y);
+                return 0;
+            }
+            return 1;
+        }
+        return 1;
+    }
+
+    public int PointPuller(int x, int y)
+    {
+        if (!Connections.ContainsKey(x) || !Connections.ContainsKey(y))
+        {
+            return 1;
+        }
+
+        foreach (var point in Connections[y])
+        {
+            Connections[x].Add(point);
+        }
+        foreach (var item in Connections)
+        {
+            if (item.Value.Contains(y))
+            {
+                item.Value.Remove(y);
+                item.Value.Add(x);
+            }
+        }
+        Connections.Remove(y);
+        return 0;
+    }
+
+
+    public int CheckTheEdge(int x, int y)
+    {
+        if (Connections.ContainsKey(x))
+        {
+            if (Connections[x].Contains(y))
+            {
+                return 0;
+            }
+            return 1;
+        }
+        return 1;
+    }
     public void GenerateGraph(int size, float density) // generate a random graph
     {
         Size = size;
