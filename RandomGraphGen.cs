@@ -12,25 +12,32 @@ public class RandomGraphGen
     public static int Size { get; set; } // graph size
 
     // значить так, поїхали, (*ня*)
-    private int AddPoint(int x, int y) // class for points to have them structurised
+    public int AddPoint(int x, int y = default) // class for points to have them structurised
     {
+        if (!Connections.ContainsKey(y))
+        {
+            return 2;
+        }
+        if (y == default)
+        {
+            if (Connections.ContainsKey(x))
+            {
+                return 1;
+            }
+            Connections.Add(x, new List<int> { });
+            return 0;
+        }
         if (Connections.ContainsKey(x)) // check if the dictionary contains the key
         {
             if (Connections[x].Contains(y)) // check if the value is already in the list
             {
                 return 1; // return 1 if the value is already in the list
             }
-            else
-            {
-                Connections[x].Add(y); // add the value to the list
-                return 0; // return 0 if the value was added
-            }
-        }
-        else
-        {
-            Connections.Add(x, new List<int> { y }); // add the key and the value to the dictionary
+            Connections[x].Add(y); // add the value to the list
             return 0; // return 0 if the value was added
         }
+        Connections.Add(x, new List<int> { y }); // add the key and the value to the dictionary
+        return 0; // return 0 if the value was added
     }
 
     public void GenerateGraph(int size, float density) // generate a random graph
